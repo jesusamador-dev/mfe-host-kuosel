@@ -1,5 +1,5 @@
 {
-  "name": "mfe-template",
+  "name": "mfe-host-kuosel",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -20,7 +20,8 @@
     "@types/react-dom": "^18.3.0",
     "dotenv": "^16.4.5",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.26.1"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

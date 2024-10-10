@@ -3,6 +3,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { ModuleFederationPlugin } = require('webpack').container;
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const { InjectManifest } = require('workbox-webpack-plugin');
+const deps = require('./package.json').dependencies;
 const dotenv = require('dotenv');
 
 // Cargar variables de entorno
@@ -12,18 +13,27 @@ const isProduction = process.env.NODE_ENV === 'production';
 const plugins = [
   new CleanWebpackPlugin(),
   new ModuleFederationPlugin({
-    name: 'host',
+    name: 'mfe_host_kuosel',
     remotes: {
-      remote: `remote@${process.env.REMOTE_URL}/remoteEntry.js`,
+      mfe_ux_kuosel: `mfe_ux_kuosel@${process.env.REMOTE_URL_UX}/remoteEntryUx.js`,
+      mfe_home_kuosel: `mfe_home_kuosel@${process.env.REMOTE_URL_HOME}/remoteEntryHome.js`,
     },
     shared: {
+      ...deps,
       react: {
         singleton: true,
-        requiredVersion: require('./package.json').dependencies.react,
+        eager: true,
+        requiredVersion: deps.react,
       },
       'react-dom': {
         singleton: true,
-        requiredVersion: require('./package.json').dependencies['react-dom'],
+        eager: true,
+        requiredVersion: deps['react-dom'],
+      },
+      'react-router-dom': {
+        singleton: true,
+        requiredVersion: deps['react-router-dom'],
+        eager: true
       },
     },
   }),
@@ -35,8 +45,8 @@ const plugins = [
 if (isProduction) {
   plugins.push(
     new InjectManifest({
-      swSrc: './src/service-worker.js', // Ruta al archivo fuente del service worker
-      swDest: 'service-worker.js', // Nombre del archivo destino del service worker
+      swSrc: './src/service-worker.js',
+      swDest: 'service-worker.js',
     })
   );
 }
@@ -81,7 +91,7 @@ module.exports = {
   resolve: {
     extensions: ['.ts', '.tsx', '.js', '.jsx'],
     alias: {
-      '@': path.resolve(__dirname, 'src/'), // Agrega este alias
+      '@': path.resolve(__dirname, 'src/'),
     },
   },
   plugins: plugins,
